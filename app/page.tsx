@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 export default function Home() {
@@ -11,6 +11,7 @@ export default function Home() {
     seconds: 0,
   });
   const [isNewYear, setIsNewYear] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const targetDate = new Date('2026-01-01T00:00:00');
@@ -74,94 +75,102 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (isNewYear && videoRef.current) {
+      videoRef.current.play().catch(e => console.log('Autoplay failed:', e));
+    }
+  }, [isNewYear]);
+
   if (isNewYear) {
     return (
-      <div className="h-screen w-screen bg-[#0a0a0a] flex items-center justify-center overflow-hidden">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1 }}
-          className="text-center"
-        >
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold text-cyan-400 drop-shadow-lg"
-              style={{ textShadow: '0 0 20px cyan, 0 0 40px cyan' }}>
+      <div style={{height: '100vh', width: '100vw', overflow: 'hidden', background: 'black'}}>
+        <video
+          src="/background.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{width: '100vw', height: '100vh', objectFit: 'cover'}}
+        />
+        <div style={{position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none'}}>
+          <h1 style={{color: 'white', fontSize: '6vw', fontWeight: 'bold', textShadow: '0 0 20px white, 0 0 40px white', textAlign: 'center', width: '100vw'}}>
             HAPPY NEW YEAR 2026!
           </h1>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen bg-[#0a0a0a] flex flex-col items-center justify-center overflow-hidden">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="text-center"
-      >
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-cyan-400 mb-8 drop-shadow-lg"
-            style={{ textShadow: '0 0 10px cyan' }}>
-          THE MARLIN SEAFOOD</h1>
-          <h2 className="text-8xl md:text-8xl lg:text-4xl font-bold text-cyan-400 mb-8 drop-shadow-lg"
-            style={{ textShadow: '0 0 10px cyan' }}>
+    <div style={{
+      height: '100vh',
+      width: '100vw',
+      overflow: 'hidden',
+      background: 'black',
+      position: 'relative'
+    }}>
+      <video
+        src="/background.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          width: '100vw',
+          height: '100vh',
+          objectFit: 'cover',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 0,
+          opacity: 0.3
+        }}
+      />
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1
+      }}>
+        <h1 style={{color: '#00ffff', fontSize: '3vw', fontWeight: 'bold', textShadow: '0 0 10px cyan', marginBottom: '1vh', textAlign: 'center'}}>
+          THE MARLIN SEAFOOD
+        </h1>
+        <h2 style={{color: '#00ffff', fontSize: '3vw', fontWeight: 'bold', textShadow: '0 0 10px cyan', marginBottom: '3vh', textAlign: 'center'}}>
           NEW YEAR'S EVE COUNTDOWN
         </h2>
-        <div className="flex space-x-4 md:space-x-8 lg:space-x-12">
-          <div className="text-center">
-            <motion.div
-              key={timeLeft.days}
-              initial={{ scale: 1.2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-6xl md:text-8xl lg:text-9xl font-mono text-cyan-400 drop-shadow-lg"
-              style={{ textShadow: '0 0 20px cyan, 0 0 40px cyan' }}
-            >
+        <div style={{display: 'flex', gap: '2vw', justifyContent: 'center', flexWrap: 'wrap'}}>
+          <div style={{textAlign: 'center'}}>
+            <div style={{color: '#00ffff', fontSize: '10vw', fontWeight: 'bold', textShadow: '0 0 20px cyan, 0 0 40px cyan', fontFamily: 'monospace'}}>
               {timeLeft.days.toString().padStart(2, '0')}
-            </motion.div>
-            <p className="text-xl md:text-2xl text-cyan-300 mt-2">DAYS</p>
+            </div>
+            <p style={{color: '#00ffff', fontSize: '1.5vw', marginTop: '0.5vh'}}>DAYS</p>
           </div>
-          <div className="text-center">
-            <motion.div
-              key={timeLeft.hours}
-              initial={{ scale: 1.2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-6xl md:text-8xl lg:text-9xl font-mono text-cyan-400 drop-shadow-lg"
-              style={{ textShadow: '0 0 20px cyan, 0 0 40px cyan' }}
-            >
+          <div style={{textAlign: 'center'}}>
+            <div style={{color: '#00ffff', fontSize: '10vw', fontWeight: 'bold', textShadow: '0 0 20px cyan, 0 0 40px cyan', fontFamily: 'monospace'}}>
               {timeLeft.hours.toString().padStart(2, '0')}
-            </motion.div>
-            <p className="text-xl md:text-2xl text-cyan-300 mt-2">HOURS</p>
+            </div>
+            <p style={{color: '#00ffff', fontSize: '1.5vw', marginTop: '0.5vh'}}>HOURS</p>
           </div>
-          <div className="text-center">
-            <motion.div
-              key={timeLeft.minutes}
-              initial={{ scale: 1.2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-6xl md:text-8xl lg:text-9xl font-mono text-cyan-400 drop-shadow-lg"
-              style={{ textShadow: '0 0 20px cyan, 0 0 40px cyan' }}
-            >
+          <div style={{textAlign: 'center'}}>
+            <div style={{color: '#00ffff', fontSize: '10vw', fontWeight: 'bold', textShadow: '0 0 20px cyan, 0 0 40px cyan', fontFamily: 'monospace'}}>
               {timeLeft.minutes.toString().padStart(2, '0')}
-            </motion.div>
-            <p className="text-xl md:text-2xl text-cyan-300 mt-2">MINUTES</p>
+            </div>
+            <p style={{color: '#00ffff', fontSize: '1.5vw', marginTop: '0.5vh'}}>MINUTES</p>
           </div>
-          <div className="text-center">
-            <motion.div
-              key={timeLeft.seconds}
-              initial={{ scale: 1.2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-6xl md:text-8xl lg:text-9xl font-mono text-cyan-400 drop-shadow-lg"
-              style={{ textShadow: '0 0 20px cyan, 0 0 40px cyan' }}
-            >
+          <div style={{textAlign: 'center'}}>
+            <div style={{color: '#00ffff', fontSize: '10vw', fontWeight: 'bold', textShadow: '0 0 20px cyan, 0 0 40px cyan', fontFamily: 'monospace'}}>
               {timeLeft.seconds.toString().padStart(2, '0')}
-            </motion.div>
-            <p className="text-xl md:text-2xl text-cyan-300 mt-2">SECONDS</p>
+            </div>
+            <p style={{color: '#00ffff', fontSize: '1.5vw', marginTop: '0.5vh'}}>SECONDS</p>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
